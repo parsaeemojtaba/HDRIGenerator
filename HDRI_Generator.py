@@ -76,16 +76,14 @@ class HDRGenerator:
             print('Calculating and writing the camera response function...') 
             calibrateDebevec = cv2.createCalibrateDebevec()
             responseDebevec = calibrateDebevec.process(images, Exposuretime)
-
             with open(os.path.join(self.LDRIs_path, camera_res), 'w') as outfile:
-                outfile.write('# Array shape: {0}\n'.format(responseDebevec.shape))
                 for res_fun_slice in responseDebevec:
                     np.savetxt(outfile, res_fun_slice, fmt='%10.7f')
-                    outfile.write('# New slice\n')
         else:
             ### Read the camera response function if it is available. 
             print('Reading the existing camera response function...')  
             responseDebevec  = np.loadtxt(CRF_filepath)
+            # print(responseDebevec)
             responseDebevec = responseDebevec.reshape((256,1,3))
             responseDebevec = np.float32(responseDebevec)
 
@@ -127,3 +125,4 @@ class HDRGenerator:
         cv2.imwrite(os.path.join(self.ResultFolder, tonmapRein_filename), ldrReinhard_8bit)
         print("saved Reinhard tone mapped image")
         return hdrDebevec, ldrGamma_8bit, ldrReinhard_8bit
+
